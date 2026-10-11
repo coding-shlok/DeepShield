@@ -1,0 +1,14 @@
+# Adaptive ensemble (PRD Contribution 3). Members must share data.image_size/clip_len inputs:
+# each member resizes internally only if trained at the same size, so we evaluate at 224 x 16.
+_base_: stage3_robust.yaml
+name: ensemble
+out_dir: runs/ensemble
+ensemble:
+  mode: gated            # mean | weighted | confidence | gated
+  epochs: 300
+  members:
+    resnet_bilstm: {checkpoint: runs/stage3_robust/best.pth}
+    efficientnet: {checkpoint: runs/effnet_distill/best.pth}
+    vit: {checkpoint: runs/vit_b16/best.pth}
+eval:
+  checkpoint: runs/ensemble/ensemble.pth

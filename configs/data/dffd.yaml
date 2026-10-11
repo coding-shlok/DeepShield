@@ -1,0 +1,9 @@
+_base_: _prepare_base.yaml
+dataset: dffd
+out_dir: data/processed/dffd
+source:
+  locations: []
+  # override labelling rules if your copy is organised differently
+  rules:
+    - {pattern: "(ffhq|celeba)", label: 0}
+    - {pattern: "(stylegan|pggan|stargan|faceapp)", label: 1, method: gan_synthesis}

@@ -1,0 +1,20 @@
+# Mobile student (PRD §6.1 secondary architecture): EfficientNet-B2 distilled from the stage-3 teacher.
+_base_: stage3_robust.yaml
+name: effnet_distill
+out_dir: runs/effnet_distill
+model:
+  backbone: {name: efficientnet_b2, pretrained: true, multiscale: true, embed_dim: 512, srm: false}
+  temporal_kw: {hidden: 256, layers: 1, dropout: 0.0}
+  fusion: {dim: 256, heads: 4}
+distill:
+  teacher_checkpoint: runs/stage3_robust/best.pth
+  temperature: 4.0
+  alpha: 0.7
+train:
+  init_checkpoint: null
+  epochs: 10
+  lr: 2.0e-4
+  adversarial: {enabled: false}
+export:
+  checkpoint: runs/effnet_distill/best.pth
+  out_dir: outputs/export_effnet

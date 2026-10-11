@@ -1,0 +1,8 @@
+_base_: _prepare_base.yaml
+dataset: deepfakebench
+out_dir: data/processed/deepfakebench
+detector: none        # DeepfakeBench frames are pre-cropped
+source:
+  json_dir: /path/to/DeepfakeBench/preprocessing/dataset_json
+  data_root: /path/to/DeepfakeBench/datasets/rgb
+  datasets: [UADFV, Celeb-DF-v2]

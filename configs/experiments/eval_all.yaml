@@ -1,0 +1,28 @@
+# Full benchmark / cross-dataset / KYC / robustness evaluation (PRD §8, D2-D4).
+#   deepshield evaluate    -c configs/experiments/eval_all.yaml --checkpoint runs/stage3_robust/best.pth --out outputs/eval
+#   deepshield kyc-eval    -c configs/experiments/eval_all.yaml --checkpoint ... --out outputs/kyc
+#   deepshield robust-eval -c configs/experiments/eval_all.yaml --checkpoint ... --out outputs/robustness
+_base_: ../base.yaml
+data:
+  manifests:
+    - data/processed/dfdc/manifest.csv
+    - data/processed/faceforensics/manifest.csv
+    - data/processed/celebdf/manifest.csv
+    - data/processed/deeperforensics/manifest.csv
+    - data/processed/wilddeepfake/manifest.csv
+    - data/processed/uadfv/manifest.csv          # unseen (PRD §9 overfitting check)
+  eval_batch_size: 8
+eval:
+  split: test
+  threshold: 0.5
+  in_domain: [dfdc, faceforensics, celebdf]   # stage-2 training sets; others are "unseen"
+  max_samples: 2000
+  attacks: [fgsm, pgd, autoattack]
+  eps: [0.0078431, 0.0156863, 0.0313725]      # 2/255, 4/255, 8/255
+  pgd_steps: 20
+  smoothing: {sigma: 0.12, n0: 50, n: 500, samples: 100, batch: 50}
+export:
+  out_dir: outputs/export
+  calib_samples: 128
+  int8: true
+  tensorrt: true

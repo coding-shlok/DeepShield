@@ -1,0 +1,10 @@
+#!/bin/bash
+# Stage 1 SimCLR.   qsub jobs/pbs/pretrain.pbs     (request ngpus=4 if your allocation allows)
+#PBS -N ds_pretrain
+#PBS -l select=1:ncpus=16:ngpus=1:mem=64gb
+#PBS -l walltime=48:00:00
+#PBS -j oe
+cd "$PBS_O_WORKDIR"
+source jobs/env.sh
+torchrun --standalone --nproc_per_node="$NGPUS" -m deepshield.cli pretrain \
+  -c "${CONFIG:-configs/experiments/stage1_simclr.yaml}" ${OVERRIDES:-}

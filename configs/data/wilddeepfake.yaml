@@ -1,0 +1,9 @@
+_base_: _prepare_base.yaml
+dataset: wilddeepfake
+out_dir: data/processed/wilddeepfake
+detector: none        # frames are already face crops
+n_frames: 32
+source:
+  # Archive names must contain real/fake and train/test, e.g. real_train.tar.gz, fake_test.tar.gz
+  # (http(s) tar archives are streamed – nothing is stored).
+  locations: []

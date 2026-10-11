@@ -1,0 +1,7 @@
+_base_: _prepare_base.yaml
+dataset: celebdf
+out_dir: data/processed/celebdf
+source:
+  # gdrive://<file-id> from the link you receive after the request form, a URL, or a local zip/dir.
+  locations: []
+  tmp_dir: null

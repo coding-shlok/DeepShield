@@ -1,0 +1,20 @@
+# Stage 1 (PRD §5.1 / §6.2 Phase 1): SimCLR on VGGFace2 real faces + DFFD GAN faces.
+_base_: ../base.yaml
+name: stage1_simclr
+out_dir: runs/stage1_simclr
+data:
+  manifests:
+    - data/processed/vggface2/manifest.csv
+    - data/processed/dffd/manifest.csv
+  split: train
+  batch_size: 256       # per GPU; NT-Xent benefits from large batches (use 4 GPUs if available)
+  num_workers: 12
+model:
+  backbone: {name: resnet50, pretrained: true, multiscale: true, embed_dim: 2048, srm: true}
+  simclr: {proj_dim: 128, hidden: 2048}
+train:
+  epochs: 30
+  lr: 3.0e-4
+  weight_decay: 1.0e-5
+  warmup_steps: 1000
+  temperature: 0.1

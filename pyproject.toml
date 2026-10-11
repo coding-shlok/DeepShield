@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deepshield"
+version = "0.1.0"
+description = "Robust deepfake detection for secure biometric KYC authentication"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "torch>=2.1",
+  "torchvision>=0.16",
+  "timm>=0.9",
+  "numpy",
+  "scipy",
+  "scikit-learn",
+  "pandas",
+  "pyyaml",
+  "opencv-python-headless",
+  "pillow",
+  "tqdm",
+  "tensorboard",
+  "matplotlib",
+  "requests",
+]
+
+[project.optional-dependencies]
+face = ["insightface>=0.7", "onnxruntime-gpu", "facenet-pytorch"]
+download = ["kaggle", "gdown"]
+deploy = ["onnx", "onnxruntime", "onnxscript"]
+robust = ["autoattack @ git+https://github.com/fra31/auto-attack"]
+wandb = ["wandb"]
+dev = ["pytest"]
+
+[project.scripts]
+deepshield = "deepshield.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["deepshield*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,45 @@
+# CPU smoke test on synthetic data – verifies the full pipeline in a few minutes.
+#   deepshield synthetic out_dir=data/processed/synthetic
+#   deepshield train -c configs/experiments/smoke.yaml
+_base_: ../base.yaml
+name: smoke
+out_dir: runs/smoke
+data:
+  manifests: [data/processed/synthetic/manifest.csv]
+  image_size: 64
+  clip_len: 4
+  batch_size: 8
+  eval_batch_size: 16
+  num_workers: 0
+  augment:
+    kyc:   # light: at 64 px heavy degradation erases the synthetic artefacts entirely
+      enabled: true
+      p: {resolution: 0.1, blur: 0.1, jitter: 0.1, jpeg: 0.2, brightness: 0.2, shadow: 0.1, occlusion: 0.05, noise: 0.1}
+model:
+  backbone: {name: resnet18, pretrained: false, multiscale: true, embed_dim: 128, srm: true}
+  temporal_kw: {hidden: 64, layers: 1, dropout: 0.0}
+  fusion: {dim: 64, heads: 4}
+train:
+  epochs: 8
+  lr: 1.0e-3
+  warmup_steps: 10
+  freeze_backbone_epochs: 0
+  early_stop_patience: 0
+  log_every: 5
+  resume: null
+  mixup: {prob: 0.1, alpha: 0.4}
+  adversarial: {enabled: true, attack: fgsm, eps: 0.0313725, prob: 0.2, weight: 0.3, start_epoch: 4}
+eval:
+  checkpoint: runs/smoke/best.pth
+  in_domain: [synthetic]
+  max_samples: 32
+  latency_iters: 3
+  attacks: [fgsm, pgd, autoattack]
+  eps: [0.0313725]
+  pgd_steps: 5
+  smoothing: {sigma: 0.12, n0: 10, n: 40, samples: 4, batch: 20}
+export:
+  checkpoint: runs/smoke/best.pth
+  out_dir: outputs/smoke_export
+  calib_samples: 8
+  tensorrt: false

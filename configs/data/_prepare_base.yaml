@@ -1,0 +1,10 @@
+# Shared preprocessing settings for `deepshield prepare`.
+device: cuda          # face detection device
+detector: retinaface  # retinaface (insightface) -> falls back to mtcnn -> full frame
+n_frames: 32          # face crops stored per video (training samples 16-frame windows)
+margin: 1.3           # bbox expansion
+crop_size: 256        # stored crop size (train at 224)
+io_workers: 4         # parallel download/decode threads
+split_ratios: [0.70, 0.15, 0.15]
+seed: 42
+limit: null           # process at most N samples (useful for a quick subset)

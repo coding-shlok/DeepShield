@@ -1,0 +1,18 @@
+# Ensemble member: R(2+1)D-18 3D-CNN spatiotemporal model (PRD §4.2 / §6.1).
+_base_: stage2_resnet_bilstm.yaml
+name: video3d_r2plus1d
+out_dir: runs/video3d_r2plus1d
+data:
+  image_size: 112
+  clip_len: 16
+  batch_size: 16
+model:
+  _replace_: true
+  arch: video3d
+  arch_name: r2plus1d_18
+loss:
+  w_frame: 0.0
+  w_temporal: 0.0
+  w_temporal_score: 0.0
+train:
+  freeze_backbone_epochs: 0

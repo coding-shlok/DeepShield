@@ -1,0 +1,14 @@
+_base_: _prepare_base.yaml
+dataset: dfdc
+out_dir: data/processed/dfdc
+n_frames: 32
+source:
+  # Each entry is one part archive. Remote zips are read with HTTP range requests: only the
+  # bytes of the video being processed are fetched, so 470 GB is never stored.
+  # Examples:
+  #   - https://<signed-url>/dfdc_train_part_0.zip
+  #   - kaggle://deepfake-detection-challenge/train_sample_videos.zip   (needs ~/.kaggle/kaggle.json)
+  #   - /scratch/$USER/dfdc/dfdc_train_part_0.zip
+  locations:
+    - kaggle://deepfake-detection-challenge/train_sample_videos.zip
+  tmp_dir: null

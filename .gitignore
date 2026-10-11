@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+# data & outputs
+/data/
+/runs/
+/outputs/
+/checkpoints/
+*.pth
+*.pt
+*.onnx
+*.engine
+/wandb/
+.ipynb_checkpoints/

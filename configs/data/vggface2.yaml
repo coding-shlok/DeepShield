@@ -1,0 +1,7 @@
+_base_: _prepare_base.yaml
+dataset: vggface2
+out_dir: data/processed/vggface2
+detector: retinaface
+source:
+  locations: []       # dir/archive(s) with <identity>/<image>.jpg (e.g. train.tar.gz)
+  max_per_identity: 50   # 9k ids x 50 = ~450k faces is plenty for SimCLR

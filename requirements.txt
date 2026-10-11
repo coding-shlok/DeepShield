@@ -1,0 +1,29 @@
+# Core (install torch matching your CUDA first: https://pytorch.org/get-started/locally/)
+torch>=2.1
+torchvision>=0.16
+timm>=0.9
+numpy
+scipy
+scikit-learn
+pandas
+pyyaml
+opencv-python-headless
+pillow
+tqdm
+tensorboard
+matplotlib
+# Face detection (RetinaFace via insightface; MTCNN fallback)
+insightface>=0.7
+onnxruntime-gpu
+facenet-pytorch
+# Dataset download helpers
+kaggle
+gdown
+requests
+# Deployment
+onnx
+onnxscript
+# Optional
+# wandb
+# git+https://github.com/fra31/auto-attack
+pytest

@@ -1,0 +1,8 @@
+_base_: _prepare_base.yaml
+dataset: deephy
+out_dir: data/processed/deephy
+source:
+  locations: []
+  rules:
+    - {pattern: "(^|/)(real|original)", label: 0}
+    - {pattern: ".*", label: 1, method: other_fake}

@@ -1,0 +1,13 @@
+# Ensemble member: ViT-B/16 patch-level attention (PRD §6.1 ensemble strategy).
+_base_: stage2_resnet_bilstm.yaml
+name: vit_b16
+out_dir: runs/vit_b16
+data:
+  clip_len: 8
+  batch_size: 8
+model:
+  backbone: {name: vit_base_patch16_224.augreg_in21k_ft_in1k, pretrained: true, multiscale: false, embed_dim: 768,
+             srm: false, drop_path: 0.1, checkpoint: null, grad_checkpointing: true}
+train:
+  lr: 5.0e-5
+  backbone_lr_mult: 0.3

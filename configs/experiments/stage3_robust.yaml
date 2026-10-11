@@ -1,0 +1,35 @@
+# Stage 3 (PRD §6.2 Phase 3 / Phase 4): domain adaptation + robustness hardening.
+# Fine-tunes stage-2 weights on DeeperForensics + WildDeepfake mixed with the stage-2 data
+# (replay prevents forgetting), with FGSM/PGD adversarial training, mixup and Gaussian noise
+# augmentation (enables randomized-smoothing certification).
+_base_: ../base.yaml
+name: stage3_robust
+out_dir: runs/stage3_robust
+data:
+  manifests:
+    - data/processed/dfdc/manifest.csv
+    - data/processed/faceforensics/manifest.csv
+    - data/processed/celebdf/manifest.csv
+    - data/processed/deeperforensics/manifest.csv
+    - data/processed/wilddeepfake/manifest.csv
+  dataset_weights: {dfdc: 0.5, faceforensics: 0.5, celebdf: 0.25, deeperforensics: 1.0, wilddeepfake: 1.0}
+  samples_per_epoch: 30000
+  augment:
+    kyc:
+      enabled: true
+      p: {resolution: 0.6, blur: 0.4, jitter: 0.4, jpeg: 0.8, brightness: 0.6, shadow: 0.3, occlusion: 0.25, noise: 0.3}
+model:
+  backbone: {pretrained: false}
+train:
+  init_checkpoint: runs/stage2_resnet_bilstm/best.pth
+  epochs: 10
+  lr: 5.0e-5
+  warmup_steps: 300
+  freeze_backbone_epochs: 0
+  mixup: {prob: 0.3, alpha: 0.4}
+  adversarial: {enabled: true, attack: pgd, eps: 0.0313725, steps: 3, prob: 0.5, weight: 0.5, start_epoch: 0}
+  gaussian_noise_sigma: 0.12
+  gaussian_noise_prob: 0.3
+eval:
+  checkpoint: runs/stage3_robust/best.pth
+  in_domain: [dfdc, faceforensics, celebdf, deeperforensics, wilddeepfake]

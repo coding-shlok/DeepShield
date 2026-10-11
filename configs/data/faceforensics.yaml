@@ -1,0 +1,12 @@
+_base_: _prepare_base.yaml
+dataset: faceforensics
+out_dir: data/processed/faceforensics
+source:
+  compression: c23
+  methods: [Deepfakes, Face2Face, FaceSwap, NeuralTextures, FaceShifter]
+  # Option A (no permanent raw storage): path to the official script you receive after the access form.
+  download_script: null      # e.g. /home/$USER/faceforensics_download_v4.py
+  server: EU2
+  # Option B: already downloaded root containing original_sequences/ and manipulated_sequences/
+  locations: []              # e.g. [/scratch/$USER/FaceForensics++]
+  tmp_dir: null              # fast local scratch for temporary files (defaults to /tmp)

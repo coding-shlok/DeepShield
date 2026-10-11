@@ -1,0 +1,19 @@
+#!/bin/bash
+# Supervised training (any experiment config). Resumes automatically from <out_dir>/last.pth,
+# so simply re-submit if the walltime runs out.
+#   qsub -v CONFIG=configs/experiments/stage2_resnet_bilstm.yaml jobs/pbs/train.pbs
+#   qsub -v CONFIG=...,OVERRIDES="train.epochs=30 data.batch_size=12" jobs/pbs/train.pbs
+#PBS -N ds_train
+#PBS -l select=1:ncpus=16:ngpus=1:mem=64gb
+#PBS -l walltime=48:00:00
+#PBS -j oe
+cd "$PBS_O_WORKDIR"
+source jobs/env.sh
+CMD=${CMD:-train}   # train | distill | fit-ensemble
+# NOTE: qsub -v splits on commas – separate OVERRIDES with spaces and avoid commas inside them.
+if [ "$CMD" = "fit-ensemble" ]; then  # single-process job
+  deepshield "$CMD" -c "${CONFIG:?set CONFIG=<yaml>}" ${OVERRIDES:-}
+else
+  torchrun --standalone --nproc_per_node="$NGPUS" -m deepshield.cli "$CMD" \
+    -c "${CONFIG:?set CONFIG=<yaml>}" ${OVERRIDES:-}
+fi

@@ -1,0 +1,5 @@
+_base_: _prepare_base.yaml
+dataset: uadfv
+out_dir: data/processed/uadfv
+source:
+  locations: []       # folder or archive with real/ and fake/ sub-folders

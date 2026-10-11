@@ -1,0 +1,21 @@
+# Stage 2 (PRD §6.2 Phase 2): multi-task fine-tuning on DFDC + FF++ + Celeb-DF.
+#   torchrun --nproc_per_node=1 -m deepshield.cli train -c configs/experiments/stage2_resnet_bilstm.yaml
+_base_: ../base.yaml
+name: stage2_resnet_bilstm
+out_dir: runs/stage2_resnet_bilstm
+data:
+  manifests:
+    - data/processed/dfdc/manifest.csv
+    - data/processed/faceforensics/manifest.csv
+    - data/processed/celebdf/manifest.csv
+  dataset_weights: {dfdc: 1.0, faceforensics: 1.0, celebdf: 0.5}   # raise FF++ if cross-dataset generalisation lags (PRD §9)
+  samples_per_epoch: 40000
+model:
+  backbone:
+    checkpoint: runs/stage1_simclr/backbone.pth   # set to null to start from ImageNet weights
+train:
+  epochs: 20
+  mixup: {prob: 0.2, alpha: 0.4}
+eval:
+  checkpoint: runs/stage2_resnet_bilstm/best.pth
+  in_domain: [dfdc, faceforensics, celebdf]

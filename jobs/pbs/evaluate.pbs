@@ -1,0 +1,16 @@
+#!/bin/bash
+# Full evaluation of one checkpoint: benchmark + cross-dataset, KYC suite, adversarial, export, report.
+#   qsub -v CKPT=runs/stage3_robust/best.pth,TAG=stage3 jobs/pbs/evaluate.pbs
+#PBS -N ds_eval
+#PBS -l select=1:ncpus=16:ngpus=1:mem=64gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+cd "$PBS_O_WORKDIR"
+source jobs/env.sh
+CFG=${CONFIG:-configs/experiments/eval_all.yaml}
+OUT=outputs/${TAG:-eval}
+deepshield evaluate    -c "$CFG" --checkpoint "${CKPT:?}" --out "$OUT/benchmark"  ${OVERRIDES:-}
+deepshield kyc-eval    -c "$CFG" --checkpoint "$CKPT"    --out "$OUT/kyc"        ${OVERRIDES:-}
+deepshield robust-eval -c "$CFG" --checkpoint "$CKPT"    --out "$OUT/robustness" ${OVERRIDES:-}
+deepshield export      -c "$CFG" --checkpoint "$CKPT"    export.out_dir="$OUT/export" ${OVERRIDES:-}
+deepshield report --dirs "$OUT/benchmark" "$OUT/kyc" "$OUT/robustness" "$OUT/export" --out "$OUT/REPORT.md"

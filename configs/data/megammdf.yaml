@@ -1,0 +1,8 @@
+_base_: _prepare_base.yaml
+dataset: megammdf
+out_dir: data/processed/megammdf
+source:
+  locations: []
+  rules:
+    - {pattern: "(^|/)(real|bona)", label: 0}
+    - {pattern: ".*", label: 1, method: other_fake}

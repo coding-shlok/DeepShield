@@ -1,0 +1,73 @@
+# Shared defaults. Experiments inherit with `_base_: ../base.yaml`.
+seed: 42
+deterministic: false
+logging:
+  wandb: false          # set true (and `pip install wandb`) to also log to Weights & Biases
+  project: deepshield
+
+data:
+  image_size: 224
+  clip_len: 16          # PRD: 16 keyframes per clip (reduce to 8 if latency-bound)
+  frame_stride: [1, 2]
+  batch_size: 8         # clips per GPU (8 x 16 frames = 128 images)
+  eval_batch_size: 8
+  num_workers: 8
+  balanced_sampling: true
+  augment:
+    hflip: 0.5
+    scale: [0.85, 1.0]
+    color_jitter: 0.2
+    kyc:                # PRD §5.3 mobile-capture simulation (random per clip)
+      enabled: true
+      resolution_scale: [0.25, 0.6]
+      blur_px: [3, 5]
+      jitter_px: 5.0
+      jpeg_quality: [60, 80]
+      brightness: [0.7, 1.3]
+      shadow: [0.2, 0.5]
+      occlusion: [mask, glasses, beard_shadow, patch]
+      noise_sigma: [2.0, 8.0]
+
+model:
+  arch: deepshield
+  backbone:
+    name: resnet50
+    pretrained: true
+    multiscale: true
+    levels: 3
+    embed_dim: 2048      # PRD: 2048-d spatial embeddings
+    srm: true
+  temporal: bilstm
+  temporal_kw: {hidden: 512, layers: 2, dropout: 0.2}
+  fusion: {dim: 512, heads: 4, layers: 1, dropout: 0.1}
+  dropout: 0.3
+
+loss:
+  # gamma=2 per PRD. alpha re-weights classes: balanced_sampling already equalises real/fake,
+  # so use [0.5, 0.5] with it; use [0.25, 0.75] when sampling at the natural 80:20 prior
+  # (data.balanced_sampling: false) – applying both double-corrects and biases towards "fake".
+  focal: {gamma: 2.0, alpha: [0.5, 0.5]}
+  w_method: 0.2
+  w_temporal: 0.1
+  w_contrastive: 0.05
+  w_frame: 0.3
+  w_temporal_score: 0.1
+
+train:
+  epochs: 20
+  lr: 1.0e-4
+  weight_decay: 1.0e-5
+  backbone_lr_mult: 0.5
+  warmup_steps: 1000
+  grad_clip: 1.0
+  grad_accum: 1
+  amp: true
+  channels_last: true
+  freeze_backbone_epochs: 1
+  select_metric: auc
+  early_stop_patience: 5
+  log_every: 50
+  resume: auto
+  mixup: {prob: 0.0, alpha: 0.4}
+  adversarial: {enabled: false}
+  gaussian_noise_sigma: 0.0

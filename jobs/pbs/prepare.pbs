@@ -1,0 +1,11 @@
+#!/bin/bash
+# Stream + face-crop one dataset.   qsub -v DATA=celebdf jobs/pbs/prepare.pbs
+#PBS -N ds_prepare
+#PBS -l select=1:ncpus=8:ngpus=1:mem=32gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+cd "$PBS_O_WORKDIR"
+source jobs/env.sh
+mkdir -p logs
+deepshield prepare -c "configs/data/${DATA:?set DATA=<dataset>}.yaml" ${OVERRIDES:-}
+deepshield datasets check data.manifests="[data/processed/${DATA}/manifest.csv]"

@@ -1,0 +1,8 @@
+_base_: _prepare_base.yaml
+dataset: deeperforensics
+out_dir: data/processed/deeperforensics
+source:
+  # manipulated_videos/* archives (+ lists/ for official splits). Include source_videos for reals,
+  # or rely on FF++ originals for the real class.
+  locations: []
+  tmp_dir: null
